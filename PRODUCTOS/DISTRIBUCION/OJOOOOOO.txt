@@ -1,0 +1,2 @@
+Si quieres volver a correr el script calculo de muestra y quieres exportar los datos, cambia de nombre al
+archivo resulante porque hay calculos sobre los que se exportaron

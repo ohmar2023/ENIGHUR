@@ -1,0 +1,10 @@
+* construccion_estratos: construcción de la variable estrato con el criterio de Javi
+* parametros_muestra: para completar el excel: número de promedio de UPM por dominio,
+		      número de hogares por UPM y dominio, número de viviendas efectivas
+		      por UPM
+* proporcion_viviendas: calculamos la proporción de las viviendas en el precenso para
+			verficar que la muestra esté distribuida bien
+* calculo_muestra: una vez obtenido los mer para cada dominio, se comprueba que con ese 
+		   mer nos de el tamaño de la muestra pre-definido
+* calculo_estimaciones_enighur: calculamos las estimaciones para completar la tabla en 
+				excel que se envió a la CEPAL.
