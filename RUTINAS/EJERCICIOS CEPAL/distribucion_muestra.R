@@ -16,3 +16,10 @@ marco1 <- marco %>%
   summarise(num_viviendas=sum(viv)) 
 
 export(marco1, "PRODUCTOS/viviendas por estrato.xlsx")
+
+
+
+# CONSULTAS ---------------------------------------------------------------
+
+marco %>% filter(dom=="01") %>% group_by(estrato) %>% summarise(sum(viv))
+names(marco)

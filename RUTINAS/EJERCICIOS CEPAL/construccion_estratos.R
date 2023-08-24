@@ -1,6 +1,7 @@
 library(janitor)
 library(tidyverse)
 library(srvyr)
+library(janitor)
 
 base <- read_sav("INSUMOS/10 ENIGHUR11_HOGARES_AGREGADOS.SAV") %>% clean_names()
 
@@ -24,8 +25,8 @@ dis <- base1 %>% as_survey_design(ids = identif_2010,
                                  nest = T)
 options(survey.lonely.psu = "certainty")
 
-ind <- dis %>%  group_by(area) %>% 
-  summarise(d1 = survey_mean(d10, vartype=c("se","ci","cv","var"),
+ind <- dis %>%  group_by(provincia) %>% 
+  summarise(d1 = survey_var(d1, vartype=c("se","ci","cv","var"),
                             na.rm = T,deff = T),n=n(),N=sum(fexp_cen2010)) 
 
 # #prov <- ind

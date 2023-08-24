@@ -9,13 +9,14 @@ library(rio)
 library(openxlsx)
 library(haven)
 
-base <- read_sav("DATA/10 ENIGHUR11_HOGARES_AGREGADOS.SAV")
+base <- read_sav("INSUMOS/10 ENIGHUR11_HOGARES_AGREGADOS.SAV")
 #
 base<-base %>% filter(!is.na(d1))
 
 var(base$d1)
 
 ## plan
+
 dis <- base %>% as_survey_design(ids = Identif_2010,
                                  strata = Dominio,
                                  weights = Fexp_cen2010,
@@ -23,9 +24,11 @@ dis <- base %>% as_survey_design(ids = Identif_2010,
 options(survey.lonely.psu = "certainty")
 
 ind  <- dis %>%  
-  summarise(d1 = survey_sd (d1, vartype=c("se","ci","cv","var"),
-                             na.rm = T,deff = T),n=n(),N=sum(Fexp_cen2010))
+  group_by(Provincia) %>% 
+  summarise(d1 = survey_mean (d1, vartype=c("se","ci","cv","var"),
+                             na.rm = T, deff = T),n=n(), N=sum(Fexp_cen2010))
 
+ind %>% View("PROVINCIA")
 
 length(unique(base$Identif_2010))
 aux_1 <- base %>% group_by(Identif_2010) %>% summarise(n())
