@@ -19,7 +19,7 @@ library(samplesize4surveys)
 Cargamos la hoja de insumos:
 
 ```{r}
-df_insumos_enighur <- read_excel("INSUMOS-ENIGHUR.xlsx", sheet = "INSUMOS", range =  "A1:O37")
+df_insumos_enighur <- read_excel("C:/Users/ollambo/Desktop/GRUPO ENIGHUR/ENIGHUR/PRODUCTOS/NUESTROS/d1_mod.xlsx", sheet = "d1_mod", range =  "A1:O37")
 # df_insumos_enighur <- read_excel("CEPAL/PROCESOS/ESTRUCTURA CEPAL REUNION 002.xlsx", 
 #                                            sheet = "INSUMOS", range = "A1:R37")
 # df_insumos_enighur$RHO <- df_insumos_enighur$RHO_2
@@ -28,12 +28,12 @@ df_insumos_enighur <- read_excel("INSUMOS-ENIGHUR.xlsx", sheet = "INSUMOS", rang
 
 ```{r}
 f_tablaMue <- function(df_insumos, str_region, mer){
-  temp <- df_insumos %>% dplyr::filter(DOMINIO == str_region) 
-  salida <- ss4HHSm(N = temp$POBLACION,
-        M = temp$UPMS_POBLACION,
-        rho = temp$RHO,
-        mu = temp$ESTIMACION, 
-        sigma = temp$Sy_GASTOS, 
+  temp <- df_insumos %>% dplyr::filter(dominio == str_region) 
+  salida <- ss4HHSm(N = temp$N,
+        M = temp$upm_pobl,
+        rho = temp$rho,
+        mu = temp$d1, 
+        sigma = temp$sd, 
         delta = mer, conf = 0.95, m = 11)$PSUinSample
   salida
 }
@@ -50,7 +50,7 @@ Función objetivo para calcular el tamaño de muestra a nivel regional de manera
 ```{r, warning=FALSE, message=FALSE}
 f_optimizacion_mer_dominios <- function(mer_param){
 
-  str_dominios <- df_insumos_enighur$DOMINIO[13:13] # todos los dominios - 33
+  str_dominios <- df_insumos_enighur$dominio[21:21] # todos los dominios - 33
   
   vctr_PSUinSample <- rep(NA_integer_, length(str_dominios)) # vector vacío cuya longitud es el total de dominios
   
@@ -60,7 +60,7 @@ f_optimizacion_mer_dominios <- function(mer_param){
 
   suma_psu <- sum(vctr_PSUinSample)
   # return(abs(f_tablaMue(df_insumos_enighur, "NACIONAL", df_insumos_enighur$MER[1])  - suma_psu)) 
-  return(abs(108 - suma_psu))
+  return(abs(72 - suma_psu))
   # retorna la muestra que tengo demás: 3009 - 959
 }
 # esta función recibe como parámetro un mer, como el ejercicio busca un mer,
@@ -72,7 +72,7 @@ Construimos una grilla (grid search) para encontrar el margen de error relativo
 
 
 ```{r, warning=FALSE, message=FALSE}
-grilla_dominio <- seq(0.04, 0.06, by = 0.001) # se fija un vector de los posibles mer
+grilla_dominio <- seq(0.09, 0.11, by = 0.001) # se fija un vector de los posibles mer
 
 vctr_optim_dominio <- length(seq_along(grilla_dominio)) # un vector vacío del tamaño del vector anterior
 
