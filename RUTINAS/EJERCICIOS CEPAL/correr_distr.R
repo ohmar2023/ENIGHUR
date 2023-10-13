@@ -73,29 +73,25 @@ db2 <- db2[!db2$dominio=="Galápagos",]
 # ------------------------------------------------------------------------------
 
 v_total_zonales <- db2 %>% group_by(Zonal) %>% summarise(n = sum(Tamanio))
-
 v_2 <- db2 %>% filter(Zonal=="Norte")  
 
-for (i in c(2:4))
-{
-  i=3
-  r_1 <- fun_1(v_total_zonales$n[i])
-  r_2 <- fun_2(v_2$Tamanio,r_1[2])
-}
+ejer1 <- fun_1(v_total_zonales$n[3])
+ejer2 <- fun_2(v_2$Tamanio,ejer1[2])
 
-for (j in c(1:dim(v_2)[1]))
+
+k=0
+for (j in c(1:length(ejer2)))
 {
   if(j==1)
   {
     k = 1
-    r_3 <- fun_3(v_2$Tamanio[1],k)
+    r_3 <- fun_3(ejer2[j],k)
+    print(r_3[[1]])
   }else{
-    k=
+    k=r_3[[2]]  
+    r_3 <- fun_3(ejer2[j],k)
+    print(r_3[[1]])
   }
-  r_3 <- fun_3(v_2$Tamanio[i],k)
 }
-
-
-
 
 

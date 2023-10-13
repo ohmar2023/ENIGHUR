@@ -13,7 +13,7 @@ fun_1 <- function(n_zonal)
   while (ceiling(n_zonal_n*k) - (n_zonal_n*k) != 0 ){
     enc_aumento <- enc_aumento + 13
     n_zonal_n <-  n_zonal_n + 13
-    print(paste(n_zonal_n,enc_aumento))
+    #print(paste(n_zonal_n,enc_aumento))
   }
   enc_1 <- (n_zonal_n*12)/(52*4)
   
@@ -80,6 +80,6 @@ fun_3 <- function(n,k=1)
  return(list(v_1,i))
 }
   
-
+fun_3(83,1)
 
 
