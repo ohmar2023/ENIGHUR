@@ -70,7 +70,7 @@ viviendas_por_estrato <- viviendas_por_estrato %>% rename("id_dom"=provincia)
 base <- viviendas_por_estrato
 
 # -------------------------------------------------------------------------
-# cORREMOS LA FUNCION PARA LOS DOMINIOS (PROVINCIAS)
+# CORREMOS LA FUNCION PARA LOS DOMINIOS (PROVINCIAS)
 # -------------------------------------------------------------------------
 
 provincias_id <- as.character(str_pad(as.character(c(1:24)),width = 2,side = "left", pad = "0"))
