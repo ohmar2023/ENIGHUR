@@ -67,31 +67,36 @@ db2 <- db2 %>% group_by(nombre_dom) %>% summarise(Tamanio = sum(Tamanio2))
 db2 <- db2 %>% left_join(select(db1,Id_Dom,Zonal,nombre_dom),by="nombre_dom") %>% 
   select(Id_Dom,dominio = nombre_dom,Tamanio,Zonal) %>% arrange(Id_Dom)
 db2 <- db2[!db2$dominio=="Galápagos",]
+db2[db2$dominio=="Tungurahua",3] <- db2[db2$dominio=="Tungurahua",3]-1
 
 # ------------------------------------------------------------------------------
 # USANDO FUNCIONES
 # ------------------------------------------------------------------------------
 
-v_total_zonales <- db2 %>% group_by(Zonal) %>% summarise(n = sum(Tamanio))
-v_2 <- db2 %>% filter(Zonal=="Norte")  
+v_total_zonales <- db2 %>% arrange(Id_Dom) %>% group_by(Zonal) %>% 
+  summarise(n = sum(Tamanio)) 
 
-ejer1 <- fun_1(v_total_zonales$n[3])
-ejer2 <- fun_2(v_2$Tamanio,ejer1[2])
-
-
-k=0
-for (j in c(1:length(ejer2)))
-{
-  if(j==1)
-  {
-    k = 1
-    r_3 <- fun_3(ejer2[j],k)
-    print(r_3[[1]])
-  }else{
-    k=r_3[[2]]  
-    r_3 <- fun_3(ejer2[j],k)
-    print(r_3[[1]])
-  }
+r_f <- list() 
+for (i in c(1:4)){
+  v_2 <- db2 %>% filter(Zonal==v_total_zonales$Zonal[i])%>% arrange(Id_Dom)
+  r <- fun_4(v_total_zonales$n[i],v_2$Tamanio)
+  r <- cbind("Id_Dom"=v_2$Id_Dom,"dominio"=v_2$dominio,r)
+  r_f[[i]] <- as.data.frame(r)
 }
 
+# ------------------------------------------------------------------------------
+# EXPORTANDO EXCEL
+# ------------------------------------------------------------------------------
 
+wb1 <- createWorkbook()
+addWorksheet(wb1,"CENTRO")
+addWorksheet(wb1,"LITORAL")
+addWorksheet(wb1,"NORTE")
+addWorksheet(wb1,"SUR")
+
+writeData(wb1,sheet = "CENTRO",r_f[[1]])
+writeData(wb1,sheet = "LITORAL",r_f[[2]])
+writeData(wb1,sheet = "NORTE",r_f[[3]])
+writeData(wb1,sheet = "SUR",r_f[[4]])
+
+saveWorkbook(wb1, "ESPACIAL_TEMPORAL.xlsx")

@@ -82,4 +82,37 @@ fun_3 <- function(n,k=1)
   
 fun_3(83,1)
 
+# ------------------------------------------------------------------------------
+# FUNCION 4
+# n -> original del dominio 
+# v -> vector con los tamanios originales para cada provincia 
+# Esta funcion abarca todas las demas funciones. Solo se deberia correr esta funcion
+# ------------------------------------------------------------------------------
 
+fun_4 <- function(n,v)
+{
+  v_1 <- fun_1(n)
+  v_2 <- fun_2(v,v_1[2])
+  
+  r_4 <- NULL
+  k=0
+  for (j in c(1:length(v_2)))
+  {
+    if(j==1)
+    {
+      k = 1
+      r_3 <- fun_3(v_2[j],k)
+      r_4 <- rbind(r_4, r_3[[1]])
+      #print(r_3[[1]])
+    }else{
+      k=r_3[[2]]  
+      r_3 <- fun_3(v_2[j],k)
+      r_4 <- rbind(r_4, r_3[[1]])
+      #r_4[j,] <- r_3[[1]]
+      #print(r_3[[1]])
+    }
+    colnames(r_4) = paste0("PERIODO ",c(1:13))
+    #rownames(r_4) = 
+  }
+  return(r_4)
+}

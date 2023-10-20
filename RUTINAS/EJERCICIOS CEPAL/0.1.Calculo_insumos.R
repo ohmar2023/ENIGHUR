@@ -11,6 +11,7 @@ library(openxlsx)
 library(haven)
 library(reshape2)
 library(janitor)
+library(readxl)
 
 #-------------------------------------------------------------------------------
 # Lectura base ENIGHUR 2012 ----------------------------------------------------
