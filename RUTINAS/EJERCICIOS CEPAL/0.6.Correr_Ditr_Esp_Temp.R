@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------------------
+# Este script corre el csript 0.5. Realiza la distribucion y exporta un xlsx.
+# ------------------------------------------------------------------------------
+
 
 # ------------------------------------------------------------------------------
 # PROV + CIUD
@@ -41,10 +45,10 @@ db1 <- db1 %>% mutate(Zonal = case_when( Id_Dom %in% z_norte ~ "Norte",
 
 # ------------------------------------------------------------------------------
 # MULTIPLOS DE 3
-# sE CONSIDERAN MULTIPLOS DE 3 SOLO PARA EL LITORAL Y CENTRO
+# SE CONSIDERAN MULTIPLOS DE 3 SOLO PARA EL LITORAL Y CENTRO
 # ------------------------------------------------------------------------------
 
-db1 <- db1 %>% mutate(aux0 = if_else(Zonal=="Litoral"|Zonal=="Centro",1,0),
+db1 <- db1 %>% mutate(aux0 = if_else(Zonal=="Litoral"| Zonal=="Centro",1,0),
                aux1 = Tam_final%%3,
                aux2 = if_else(aux1==2,2,0),
                aux3 = if_else(aux1==1,1,0),
@@ -52,7 +56,8 @@ db1 <- db1 %>% mutate(aux0 = if_else(Zonal=="Litoral"|Zonal=="Centro",1,0),
 db1 %>% group_by(Zonal) %>% summarise(sum(Tamanio2))
 
 # ------------------------------------------------------------------------------
-# ARMANDO 24 DOMINIOS
+# ARMANDO 24 DOMINIOS: A Tungurahua se le quita una UPM para obtener un número
+# entero de encuestadores. Esto no afecta en nada.
 # ------------------------------------------------------------------------------
 
 db2 <- db1[-dim(db1)[1],]
@@ -80,8 +85,11 @@ r_f <- list()
 for (i in c(1:4)){
   v_2 <- db2 %>% filter(Zonal==v_total_zonales$Zonal[i])%>% arrange(Id_Dom)
   r <- fun_4(v_total_zonales$n[i],v_2$Tamanio)
-  r <- cbind("Id_Dom"=v_2$Id_Dom,"dominio"=v_2$dominio,r)
-  r_f[[i]] <- as.data.frame(r)
+  r <- as.data.frame(r)
+  r <- cbind("Id_Dom"=c(v_2$Id_Dom),
+              "Dominio"=c(v_2$dominio),r)
+  r <- r %>%adorn_totals(where =c("col","row"),fill = "-")
+  r_f[[i]] <- r
 }
 
 # ------------------------------------------------------------------------------

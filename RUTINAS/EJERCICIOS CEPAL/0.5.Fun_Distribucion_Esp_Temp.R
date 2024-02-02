@@ -1,7 +1,17 @@
 # ------------------------------------------------------------------------------
-# FUNCION 1
-# CALCULOS POR ZONALES considerando los equipos de 4 personas
-# Retorna dos enteros: Uno con el n final y el otro con el aumento total
+# Este SCRIPT solo contiene las funciones que se utilizan en el script 0.6. 
+# Estas funciones nos permiten realizar la distribución espacial y temporal
+# en cada dominio durante los 13 periodos en los que se llevará a cabo la
+# encuesta. La distribución considera cuidar el numero de encuestadores y 
+# que la muestra sea similar en cada periodo (esto en cuanto a la cantidad de 
+# UPMs) por tal motivo, el tamaño de muestra aumenta en algunos dominios. Estos
+# aumentos han sido aceptados por la productora. 
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# FUNCIÓN 1
+# CÁLCULOS POR ZONALES considerando los equipos de 4 personas.
+# Retorna dos enteros: Uno con el n final y el otro con el aumento total.
 # ------------------------------------------------------------------------------
 
 fun_1 <- function(n_zonal)
