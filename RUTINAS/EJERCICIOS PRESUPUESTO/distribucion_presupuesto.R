@@ -40,24 +40,29 @@ propr_viv_estratos_rur <- viviendas_por_estrato %>% filter(area==2) %>%
 ruta <-"RUTINAS/EJERCICIOS PRESUPUESTO/RESULTADOS/muestra_ejer_presupuesto_estimaciones_2012.xlsx"
 muestra_ciu <- read_excel(ruta)
 muestra_ciu$id_dom <- str_pad(as.character(c(1:33)),width = 2,side = "left", pad = "0")
+v_aux <- as.character(c(25:33))
 
 n_urbano_final <- propr_viv_estratos_urb %>% left_join(select(muestra_ciu,
                                             PSUinSample,
                                             nombre_dom,id_dom),by="id_dom")
-v_aux <- as.character(c(25:33))
 
 n_urbano_final <- n_urbano_final %>% mutate(n=if_else(id_dom %in% v_aux,
-                                    ceiling(PSUinSample*proporcion_ciu),
-                                    n)) 
-n_urbano_final %>% filter(nombre_dom!="Galápagos") %>% 
-  group_by(nombre_dom) %>% 
-  summarise(sum(n)) %>% 
-  adorn_totals() %>% 
-  View()
+                                    ceiling(PSUinSample*proporcion_ciu),n))
+
+n_urbano_final <- n_urbano_final %>% filter(nombre_dom!="Galápagos") %>% 
+  group_by(id_dom,nombre_dom) %>% 
+  summarise(Tam_final=sum(n)) 
 
                           
-                          
-                          
+n_rural_final <- propr_viv_estratos_rur %>% 
+  left_join(select(n_urbano_final,id_dom,nombre_dom),by="id_dom") %>% 
+    group_by(id_dom,nombre_dom) %>% 
+    summarise(Tam_final=sum(n)) 
+
+n_final <- rbind(n_urbano_final,n_rural_final) %>%  
+  group_by(id_dom,nombre_dom) %>% 
+  summarise(Tam_final=sum(Tam_final))  %>% 
+  rename(Id_Dom=id_dom) %>% adorn_totals()
 
                           
                           

@@ -27,7 +27,6 @@
 # 
 # ------------------------------------------------------------------------------
 
-db1 <- r
 db1 <- n_final
 
 # ------------------------------------------------------------------------------
@@ -49,12 +48,14 @@ db1 <- db1 %>% mutate(Zonal = case_when( Id_Dom %in% z_norte ~ "Norte",
 # SE CONSIDERAN MULTIPLOS DE 3 SOLO PARA EL LITORAL Y CENTRO
 # ------------------------------------------------------------------------------
 
-db1 <- db1 %>% mutate(aux0 = if_else(Zonal=="Litoral"| Zonal=="Centro",1,0),
-               aux1 = Tam_final%%3,
-               aux2 = if_else(aux1==2,2,0),
-               aux3 = if_else(aux1==1,1,0),
-               Tamanio2 = if_else(aux0==1,-aux2-aux3+Tam_final,Tam_final)) 
-db1 %>% group_by(Zonal) %>% summarise(sum(Tamanio2))
+# db1 <- db1 %>% mutate(aux0 = if_else(Zonal=="Litoral"| Zonal=="Centro",1,0),
+#                       aux1 = Tam_final%%3,
+#                       aux2 = if_else(aux1==2,2,0),
+#                       aux3 = if_else(aux1==1,1,0),
+#                       Tamanio2 = if_else(aux0==1,-aux2-aux3+Tam_final,Tam_final)) 
+# db1 %>% group_by(Zonal) %>% summarise(sum(Tamanio2))
+
+db1$Tamanio2 <- db1$Tam_final
 
 # ------------------------------------------------------------------------------
 # ARMANDO 24 DOMINIOS: A Tungurahua se le quita una UPM para obtener un número
@@ -68,7 +69,7 @@ db2[db2$Id_Dom %in% aux2,]$nombre_dom <- c("Pichincha","Guayas","Azuay","El Oro"
                                            "Tungurahua","Esmeraldas","Loja",
                                            "Manabí",
                                            "Santo Domingo de los Tsachilas"
-                                           )
+)
 db2 <- db2 %>% group_by(nombre_dom) %>% summarise(Tamanio = sum(Tamanio2))  
 db2 <- db2 %>% left_join(select(db1,Id_Dom,Zonal,nombre_dom),by="nombre_dom") %>% 
   select(Id_Dom,dominio = nombre_dom,Tamanio,Zonal) %>% arrange(Id_Dom)
@@ -88,7 +89,7 @@ for (i in c(1:4)){
   r <- fun_4(v_total_zonales$n[i],v_2$Tamanio)
   r <- as.data.frame(r)
   r <- cbind("Id_Dom"=c(v_2$Id_Dom),
-              "Dominio"=c(v_2$dominio),r)
+             "Dominio"=c(v_2$dominio),r)
   r <- r %>%adorn_totals(where =c("col","row"),fill = "-")
   r_f[[i]] <- r
 }
@@ -108,4 +109,4 @@ writeData(wb1,sheet = "LITORAL",r_f[[2]])
 writeData(wb1,sheet = "NORTE",r_f[[3]])
 writeData(wb1,sheet = "SUR",r_f[[4]])
 
-saveWorkbook(wb1, "ESPACIAL_TEMPORAL.xlsx")
+saveWorkbook(wb1, "ESPACIAL_TEMPORAL_PRESUPUESTO.xlsx")
