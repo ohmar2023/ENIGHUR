@@ -1,10 +1,6 @@
 library(stringr)
 
-
-
 viviendas_por_estrato <- read_excel("PRODUCTOS/DISTRIBUCION/viviendas por estrato.xlsx")
-
-
 
 n_1 <- tamanio_area$PSUinSample[1] 
 n_2 <- tamanio_area$PSUinSample[2]
@@ -53,7 +49,6 @@ n_urbano_final <- n_urbano_final %>% filter(nombre_dom!="Galápagos") %>%
   group_by(id_dom,nombre_dom) %>% 
   summarise(Tam_final=sum(n)) 
 
-                          
 n_rural_final <- propr_viv_estratos_rur %>% 
   left_join(select(n_urbano_final,id_dom,nombre_dom),by="id_dom") %>% 
     group_by(id_dom,nombre_dom) %>% 
@@ -62,12 +57,14 @@ n_rural_final <- propr_viv_estratos_rur %>%
 n_final <- rbind(n_urbano_final,n_rural_final) %>%  
   group_by(id_dom,nombre_dom) %>% 
   summarise(Tam_final=sum(Tam_final))  %>% 
-  rename(Id_Dom=id_dom) %>% adorn_totals()
+  rename(Id_Dom=id_dom) 
 
-                          
-                          
-                          
-                          
+n_final[n_final$Id_Dom=="20",3] <- 104
+n_final[n_final$Id_Dom=="20",2] <- "Galápagos"
+
+n_final <- n_final %>% mutate(Tam_final = if_else(Tam_final<13,13,Tam_final))
+
+n_final <- n_final %>% adorn_totals()                          
                           
                           
                           

@@ -21,13 +21,14 @@
 # LEER MUESTRA FINAL ENVIADA
 # ------------------------------------------------------------------------------
 
-#m_final <- read.xlsx("Muestra Final_ENVIADA.xlsx") 
+m_final <- read.xlsx("Muestra Final_ENVIADA.xlsx") 
 
 # ------------------------------------------------------------------------------
 # 
 # ------------------------------------------------------------------------------
 
-db1 <- n_final
+db1 <- m_final %>% mutate(Tam_final = ceiling(Tam_final + (1/6)*Tam_final)) %>% 
+  adorn_totals()
 
 # ------------------------------------------------------------------------------
 # ARMAR ZONALES
@@ -92,7 +93,19 @@ for (i in c(1:4)){
              "Dominio"=c(v_2$dominio),r)
   r <- r %>%adorn_totals(where =c("col","row"),fill = "-")
   r_f[[i]] <- r
+  
 }
+
+muestra_final <- rbind(r_f[[1]],r_f[[2]],
+                       r_f[[3]],r_f[[4]]) %>% 
+  filter(Id_Dom!="Total") %>% arrange(Id_Dom) %>% 
+  select(Id_Dom,Dominio,Total)
+
+muestra_final <- rbind(muestra_final,n_final %>% filter(Id_Dom=="20")  %>% 
+        rename("Dominio"=nombre_dom,"Total"=Tam_final)) %>% 
+  arrange(Id_Dom)
+
+
 
 # ------------------------------------------------------------------------------
 # EXPORTANDO EXCEL
@@ -103,10 +116,18 @@ addWorksheet(wb1,"CENTRO")
 addWorksheet(wb1,"LITORAL")
 addWorksheet(wb1,"NORTE")
 addWorksheet(wb1,"SUR")
+addWorksheet(wb1,"NACIONAL")
 
 writeData(wb1,sheet = "CENTRO",r_f[[1]])
 writeData(wb1,sheet = "LITORAL",r_f[[2]])
 writeData(wb1,sheet = "NORTE",r_f[[3]])
 writeData(wb1,sheet = "SUR",r_f[[4]])
+writeData(wb1,sheet = "NACIONAL",muestra_final)
 
-saveWorkbook(wb1, "ESPACIAL_TEMPORAL_PRESUPUESTO.xlsx")
+ruta <- "RUTINAS/EJERCICIOS PRESUPUESTO/RESULTADOS/ESP_TEMP_PRESUPUESTO_1_6.xlsx"
+saveWorkbook(wb1, ruta)
+
+
+
+
+

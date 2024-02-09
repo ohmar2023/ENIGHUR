@@ -9,7 +9,7 @@ library(rio)
 # LECTURA DE INSUMOS -----------------------------------------------------------
 #-------------------------------------------------------------------------------
 
-d1 <- read_excel("RUTINAS/EJERCICIOS PRESUPUESTO/INSUMOS/ESTIMACIONES_12_VARIABLES_.xlsx", sheet = "d1")
+d1 <- read_excel("RUTINAS/EJERCICIOS PRESUPUESTO/INSUMOS_002/INSUMOS_TAMANIO/ESTIMACIONES_12_VARIABLES_EJER_PRESUPUESTO.xlsx", sheet = "d1")
 
 #-------------------------------------------------------------------------------
 # CALCULO TAMAÑOS --------------------------------------------------------------
