@@ -9,8 +9,8 @@ library(rio)
 # LECTURA DE INSUMOS -----------------------------------------------------------
 #-------------------------------------------------------------------------------
 
-ruta <-"RUTINAS/EJERCICIOS PRESUPUESTO/INSUMOS_002/INSUMOS_TAMANIO/AREA/ESTIMACIONES_12_VARIABLES_EJER_PRESUPUESTO_AREA.xlsx"
-d1 <- read_excel(ruta, sheet = "d1_mod")
+ruta <-"RUTINAS/EJERCICIOS PRESUPUESTO/INSUMOS_002/INSUMOS_TAMANIO/REGION/ESTIMACIONES_12_VARIABLES_EJER_PRESUPUESTO_REGION.xlsx"
+d1 <- read_excel(ruta, sheet = "d1")
 
 #-------------------------------------------------------------------------------
 # CALCULO TAMAÑOS --------------------------------------------------------------
