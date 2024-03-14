@@ -18,6 +18,11 @@ library(readxl)
 #-------------------------------------------------------------------------------
 
 base <- read_sav("INSUMOS/10 ENIGHUR11_HOGARES_AGREGADOS.SAV") %>% clean_names()
+regiones <- read_excel("INSUMOS/regiones.xlsx")
+base <- base %>% 
+  mutate(dominio=as.character(dominio),
+         dominio = str_pad(dominio,width = 2,side = "left",pad = "0")) %>% 
+  left_join(regiones,by="dominio") 
 #saveRDS(base,"RUTINAS/EJERCICIOS PRESUPUESTO/RESULTADOS/base_2012_enighur.rds")
 #-------------------------------------------------------------------------------
 # Identificadores de las ciudades autorepresentadas ----------------------------
@@ -33,17 +38,19 @@ v_ciudades_auto <- c("170150","090150","010150","070150","180150",
 
 Marco <- import("INSUMOS/20211025_marco_upm.rds")
 
-upm_area <- Marco %>% group_by(area) %>% summarise(n=n()) %>% 
-  rename("dom"=area)
+upm_region <- Marco %>% mutate(dominio=str_sub(id_conglomerado,1,2)) %>% 
+  left_join(regiones,by="dominio") %>% 
+  group_by(region) %>% summarise(n=n()) %>% 
+  rename("dom"=region)
 
 #-------------------------------------------------------------------------------
 #------------ TOTAL DE UPMS EFECTIVAS POR DOMINIO - ENIGHUR2012 ----------------
 #-------------------------------------------------------------------------------
 
-prom_hogares_upm_area <- base %>% filter(!is.na(d1)) %>% 
-  group_by(area,identif_2010) %>% 
-  summarise(n=n()) %>% group_by(area) %>% 
-  summarise(n=mean(n)) %>% rename(dom=area) 
+prom_hogares_upm_region <- base %>% filter(!is.na(d1)) %>% 
+  group_by(region,identif_2010) %>% 
+  summarise(n=n()) %>% group_by(region) %>% 
+  summarise(n=mean(n)) %>% rename(dom=region) 
 
 # -----------------------------------------------------------------------------
 # Creamos la variiable estrato para poder identificar la ciudad auto, resto urb
@@ -93,26 +100,26 @@ for (i in c(12:1)){
   #-------------------------------------------------------------------------------
   #---------------------- MEDIA DE LA VARIABLE -----------------------------
   #----------------------------------------------------------------------------
-  ind_area_mean <- dis %>%  group_by(area) %>% 
+  ind_region_mean <- dis %>%  group_by(region) %>% 
     summarise(d1 = survey_mean(.data[[lista_variables[i]]], 
                                vartype=c("se","ci","cv","var"),
                                na.rm = T,deff = T),n=n(),N=sum(fexp_cen2010)) %>% 
-    rename("dominio"=area)
+    rename("dominio"=region)
   
   #-------------------------------------------------------------------------------
   #---------------------- DESVIACION DE LA VARIABLE -----------------------------
   #----------------------------------------------------------------------------
-  ind_area_sd <- dis %>%  group_by(area) %>% 
+  ind_region_sd <- dis %>%  group_by(region) %>% 
     summarise(d1 = survey_sd(.data[[lista_variables[i]]], 
                              vartype=c("se","ci","cv","var"),
                              na.rm = T,deff = T),n=n(),N=sum(fexp_cen2010)) %>% 
-    rename("dominio"=area) 
+    rename("dominio"=region) 
   
   #-----------------------------------------------------------------------------
   #---------------------- CONSOLIDANDO ESTIMADORES -----------------------------
   #-----------------------------------------------------------------------------
   
-  ind <- ind_area_mean %>% left_join(select(ind_area_sd,dominio,"sd"=d1),
+  ind <- ind_region_mean %>% left_join(select(ind_region_sd,dominio,"sd"=d1),
                                      by="dominio")
   
   #-------------------------------------------------------------------------------
@@ -120,13 +127,13 @@ for (i in c(12:1)){
   #----------------------------------------------------------------------------
   
   ind$mer <-  (ind$d1_se/ind$d1)*1.96
-  ind$rho <- (ind$d1_deff-1)/(prom_hogares_upm_area$n-1)
+  ind$rho <- (ind$d1_deff-1)/(prom_hogares_upm_region$n-1)
   ind$conf <- 0.95
   ind$tnr <- 0.2
   ind$b <- 1
-  ind$upm_pobl <- upm_area$n
+  ind$upm_pobl <- upm_region$n
   ind$upm_efect <- ind$n
-  ind$prom_hogares_upm <- prom_hogares_upm_area$n
+  ind$prom_hogares_upm <- prom_hogares_upm_region$n
   
   #-----------------------------------------------------------------------------
   #------- SELECCION DE VARIABLES PARA LA COSNTRUCCION DEL TAM -----------------
