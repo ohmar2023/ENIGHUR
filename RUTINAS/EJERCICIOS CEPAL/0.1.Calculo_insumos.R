@@ -12,6 +12,7 @@ library(haven)
 library(reshape2)
 library(janitor)
 library(readxl)
+library(sjlabelled)
 
 #-------------------------------------------------------------------------------
 # Lectura base ENIGHUR 2012 ----------------------------------------------------
