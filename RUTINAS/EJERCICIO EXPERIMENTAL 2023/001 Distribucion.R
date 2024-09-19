@@ -18,7 +18,7 @@ marco_upm <- readRDS("RUTINAS/DISTRIBUCION MUESTRA/INSUMOS/marco_upm.rds") %>%
 # -------------------------------------------------------------------------
 # LECTURA MUESTRA ---------------------------------------------------------
 # -------------------------------------------------------------------------
-muestra <- read_excel("RUTINAS/DISTRIBUCION MUESTRA//INSUMOS/Muestra Final_ENVIADA.xlsx") %>% 
+muestra <- read_excel("RUTINAS/EJERCICIO EXPERIMENTAL 2023/INSUMOS/Muestra 20 UPM.xlsx") %>% 
   clean_names()
 
 # --- PROPORCIONES DE VIVIENDA POR ESTRATO
@@ -41,7 +41,8 @@ base_3 <- base_2 %>%
   group_by(dom) %>% 
   mutate(tam_inter = sum(redondeo_1),
          exceso = tam_inter - tam_final,
-         dif = abs(sobra - 0.5)) %>%
+         #dif = ifelse(redondeo_1 == 3,1, abs(sobra - 0.5))) %>% 
+         dif = abs(sobra - 0.5)) %>% 
   ungroup() %>% 
          arrange(dif) %>%
   group_by(dom) %>% 
@@ -54,7 +55,8 @@ base_3 <- base_2 %>%
          #tam_distr_final = ifelse(elegido == 2,redondeo_1+exceso,redondeo_1)) %>%
          tam_distr_final = ifelse(exceso == 2 & (f ==1 | f==2),redondeo_1-1,redondeo_1),
          tam_distr_final = ifelse(abs(exceso) == 1  & f ==1, redondeo_1-exceso,tam_distr_final)) %>% 
-  ungroup()
+  ungroup() %>% 
+  filter(!is.na(tam_distr_final))
 
 # --- CONTROL PARA NO EXCEDER NI DISMINUIR EL TAMAÑO POR ESTRATO (DIF VAR DE CONTROL)
 base_3 %>% group_by(dom) %>% 
@@ -63,19 +65,17 @@ base_3 %>% group_by(dom) %>%
             dif = tam_final_final-tam_original) %>% 
   View()
 
-# --- cONTROL CON LA DISTRIBUCION DEL ANGELITO GAIBOR
-distribucion_enighur_angel %>% left_join(select(base_3,estrato,tam_distr_final)) %>% 
-  mutate(dif = nh - tam_distr_final) %>% View("dif")
 
 # EXPORTAREMOS EL INSUMO NECESARIO PARA SEGUIR CON LA SELECCION EN EL MARCO
 
-ruta <- "RUTINAS/DISTRIBUCION MUESTRA/RESULTADOS/DISTRIBUCION FINAL"
-export(base_3 %>% select(estrato,nh = tam_distr_final),paste0(ruta,"/distr_estratos_enighur.rds"))
+ruta <- "RUTINAS/EJERCICIO EXPERIMENTAL 2023/RESULTADOS/DISTRIBUCION FINAL"
+export(base_3 %>% select(estrato,nh = tam_distr_final),paste0(ruta,"/distr_ejer_experimental_enighur.rds"))
 
 names(base_3)
 names(distribucion_enighur_angel)
 
-
+base_3 %>% select(dom,estrato,nh = tam_distr_final) %>% adorn_totals() %>% View()
+base_3 %>% group_by(dom) %>% summarise(sum(tam_distr_final))
 
 
 
